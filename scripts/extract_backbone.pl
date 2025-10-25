@@ -7,6 +7,7 @@
 # variable box size   17 may 2024
 # added $line         15 dec 2024
 # added $epc           2 sep 2025
+# added loop handling 25 oct 2025
 
 sub USAGE { print<<EOF;
 use as:\n 
@@ -210,7 +211,13 @@ foreach $m (1 .. $mols) {
             @neighbors = split(/ /,$conn[$list[$#list]]);
             foreach $n (@neighbors) {
                 if ($chemdist[$n] eq $dist) {
-                    $list[$#list+1] = $n; 
+                    if ($n~~@TRANS) {
+                        print "id $n had been assigned earlier - treat as loop type A\n";  # loop handling 25 oct 2025
+                    } elsif ($n~~@list)  {
+                        print "id $n had been assigned earlier - treat as loop type B\n";  # loop handling 25 oct 2025
+                    } else {
+                        $list[$#list+1] = $n; 
+                    };
                 };
             }; 
         }; 
