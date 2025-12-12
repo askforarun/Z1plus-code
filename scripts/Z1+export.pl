@@ -90,6 +90,7 @@ foreach $mol (1 .. $chains) {
     # ---
     $line=<S>; $line=strip($line); ($X,$Y,$Z,$rest)=split(/ /,$line);
     $type = 4; 
+    $id += 1; # added 12 dec 2025
     $ATOM .= "$id $mol $type $X $Y $Z$ZEROS\n";
     # ---
     foreach $i (2 .. $n-1) {
