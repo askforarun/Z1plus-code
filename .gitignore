@@ -1,0 +1,17 @@
+# macOS
+.DS_Store
+
+# Python
+__pycache__/
+*.pyc
+
+# Generated postprocessing outputs
+Z1+merge.data
+Z1+merged.dump
+Z1+merged-*.data
+Z1+initconfig.data
+Z1+SP.data
+entangled-with-chain-*.data
+entangled-with-chain-*.txt
+Z1+initconfig-chain=*.dat
+Z1+SP-chain=*.dat

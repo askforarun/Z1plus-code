@@ -1,12 +1,20 @@
 # Z1+ code
 
-The Z1+ code creating the shortest multiple disconnected path for the analysis of entanglements in macromolecular systems is available for download [here at mendeley](https://data.mendeley.com/datasets/m425t6xtwr/1). The file at Mendeley does not contain the latest version of the Z1+import-lammps.pl script. Please download Z1+import-lammps.pl drom the scripts directory and overwrite Z1+import-lammps.pl you obtained from Mendeley with this latest version (before or after installing Z1+).  
+The Z1+ code creating the shortest multiple disconnected path for the analysis of entanglements in macromolecular systems is available for download [here at mendeley](https://data.mendeley.com/datasets/m425t6xtwr/1). This repo maintains a Python utility layer around the packaged Z1+ solver. Use the active Python scripts from `scripts/` instead of the older standalone Perl helpers distributed with some upstream bundles.  
 
 The related publication describing all features is available for free [here at Comput. Phys. Commun.](https://www.sciencedirect.com/science/article/pii/S0010465522002867?via%3Dihub)
 
 Here we collect questions, answers, and additional scripts that may be useful for Z1+ users. 
 
 If you come across any problem during installing or testing Z1+, please be so kind to let me know, so that I can add the information for others to this site.  
+
+## Repository layout
+
+- `Z1+/` contains the packaged Z1+ solver, installer, and upstream support files.
+- `scripts/` contains the active Python utility layer.
+  - Preprocessing: `Z1+import-lammps.py`, `extract_backbone.py`, `extract_backbone_vs1.py`, and `convert_vmd_data_to_proper_data.py`.
+  - Postprocessing: `Z1+dump.py`, `Z1+dat2dump.py`, `Z1+SP-to-data.py`, `Z1+export.py`, and `extract-single-chain-entanglements.py`.
+- `replacements/` contains upstream compatibility files such as `Z1+template.pl` for the packaged launcher when needed.
 
 ## How to extract linear backbones from fully atomistic LAMMPS models 
 
@@ -16,62 +24,62 @@ Question: I am simulating atomistically detailed PMMA via LAMMPS, and have saved
 
 Answer: I created a script that automatically recognizes and extracts the linear backbones from your LAMMPS data file, and saves the linear conformation as Z1-formatted file config.Z1. The Z1+ code can then be directly applied to config.Z1. If you have both a LAMMPS data file and LAMMPS dump trajectory for the same system, this script creates a Z1-formatted trajectory file. The script is available for download in the scripts folder. Call it via
 
-    perl ./extract-backbone.pl
+    python scripts/extract_backbone.py -h
 
 or 
 
-    perl ./extract-backbone.pl <lammps-data-file>
+    python scripts/extract_backbone.py <lammps-data-file>
 
 or
 
-    perl ./extract-backbone.pl <lammps-data-file> <lammps-dump-trajectory>
+    python scripts/extract_backbone.py <lammps-data-file> <lammps-dump-trajectory>
 
-Note. From 17 may 2024 onwards, the extract-backbone.pl script treats dump-trajectories with variable (cubic) box sizes. From 2 sep 2025 onwards, it treats sheared tricilinc boxes as well. Note that in the case of sheared configuration you should not extract the backbone from a single data file without dump trajectory at hand, as the information about the Lees-Edwards parameters is retrieved by the extract-backbone.pl from the dump trajectory. 
+Note. The Python `extract_backbone.py` script handles cubic trajectories and the single-tilt shear conventions carried over from the older helper. In the case of sheared configurations, prefer using a dump trajectory rather than relying on a data file alone.
 
 ## How to extract linear backbones from fully atomistic LAMMPS models, if the atomistic model contains non-polymers in addition?
 
 Question posed by Jingqi Zhang in Feb 2024. I have LAMMPS data and dump-trajectories (id mol type xu yu zu) for a system that contains branched polymers as well as individual C60 beads (bead type 4). How to convert the dump-trajectory file to a Z1-trajectory file that contains only the linear backbones of the polymers? Such Z1-trajectory file can be analyzed directly using the Z1+ code, while the LAMMPS dump-trajectory file produces errors. 
 
-Answer: The extract-backbone.pl script had been extended to contain a -ignore-types=<type1,type2,..> option. Call it via 
+Answer: The Python `extract_backbone.py` script provides the same `-ignore-types=<type1,type2,..>` option. Call it via 
 
 
-    perl ./extract-backbone.pl <lammps-data-file> <lammps-dump-trajectory> -ignore-types=4
+    python scripts/extract_backbone.py <lammps-data-file> <lammps-dump-trajectory> -ignore-types=4
 
 If your system has more than a single atom type that need to be ignored, such as types 2,4, and 10, use -ignore-types=2,4,10.
 
 ## How to produce a Z1-formatted trajectory file from an unsorted LAMMPS dump-trajectory?
 
-A LAMMPS dump-file does not contain information about bonds. Only if the dump-file had been generated using the dump_modify sort id option, and if your bead id is bonded to the adjacent bead id, Z1+ can recognize the chains. The LAMMPS data file, on the other hand, contains bond information. With a LAMMPS data and unsorted LAMMPS dump-trajectory at hand, you can use the extract-backbone.pl script to create a Z1-formatted trajectory file, as the extract-backbone.pl script retrieves information about the bonds from the data-file, and uses it to sort the trajectory file. 
+A LAMMPS dump-file does not contain information about bonds. Only if the dump-file had been generated using the dump_modify sort id option, and if your bead id is bonded to the adjacent bead id, Z1+ can recognize the chains. The LAMMPS data file, on the other hand, contains bond information. With a LAMMPS data and unsorted LAMMPS dump-trajectory at hand, you can use the Python `extract_backbone.py` script to create a Z1-formatted trajectory file, as it retrieves the bond graph from the data file and uses it to sort the trajectory.
 
-    perl ./extract-backbone.pl <lammps-data-file> <unsorted-lammps-dump-trajectory>
+    python scripts/extract_backbone.py <lammps-data-file> <unsorted-lammps-dump-trajectory>
 
 ## How to convert a Z1-formatted configuration or trajectory file to LAMMPS-dump-formatted file? 
 
-    perl ./Z1+dump [-unfolded] <Z1-formatted-file>  
+    python scripts/Z1+dump.py [-unfolded] <Z1-formatted-file>  
 
 creates a LAMMPS-dump file or LAMMPS-dump trajectory file. If the option -unfolded is given, the dump-file contains unfolded coordinates (xu yu zu), otherwise it contains folded (wrapped) coordinates (x,y,z). The dump-file contains two bead types: type 1 (interior beads), type 2 (terminal beads). The script is available for download in the scripts folder. 
 Note that a Z1-formatted file has all chain lengths in its third line. Z1+ also creates dat files (Z1+SP.dat, Z1+PPA.dat, Z1+initconfiguration.dat). Such .dat-files can be converted to a LAMMPS-dump trajectory myfile.dump using
 
-    perl ./Z1+dat2dump [-unfolded] Z1+SP.dat > myfile.dump 
+    python scripts/Z1+dat2dump.py [-unfolded] Z1+SP.dat > myfile.dump 
 
 
 ## How to merge shortest path and original configuration file into a single data or dump trajectory?
 
 Call
 
-    perl ./Z1+export.pl
+    python scripts/Z1+export.py
 
 to see the options. It creates data or dump files or trajectories for selected (or all) snapshots and assigns bead types 1,2,3 for the original chains, and bead types 4,5,6 for the shortest path. 
 
 There is another script, that can be called after Z1+ finished. The following script creates lammps data files for the initial and/or shortest path configuration, to see the documentation, just type 
 
-    perl ./Z1+SP-to-data.pl
+    python scripts/Z1+SP-to-data.py
 
 ## How to visualize or inspect a single chain with all chains entangled with it? 
 
 This may done most conveniently using our script 
 
-    perl ./extract-single-chain-entanglements.pl <ChainId> [-folded] [-txt] [-SP] [-ee] [-o=..]
+    python scripts/extract-single-chain-entanglements.py <ChainId> [-folded] [-txt] [-SP] [-ee] [-o=..]
 
 Upon entering a chain ID, the script generates a lammps-formatted data file
 (format: id mol type x y z, no charges) that contains the selected chain along with all
@@ -116,7 +124,7 @@ file, in particular). Since Z1+ does not move the terminal atoms of chains, the 
 
 You need a lammps data file of the unsheared system, as well as a dump trajectory file. Z1+ assumes that you shear in x-direction, gradient in y-direction, so that the only nonzero tilt is xy. Extract the backbone and tilt values, pass them over to config.Z1, and start Z1+ via
 
-        perl ./extract_backbone.pl <myfile.data> <myfile.dump>;
+        python scripts/extract_backbone.py <myfile.data> <myfile.dump>
         perl ./Z1+
 
 ## Are there benchmark configurations to test my own implementation of Z1+?
@@ -133,17 +141,15 @@ If you still want to use the PPA or PPA+ options, you have to scale your box siz
 
 ## Z1+ crashes because the the lammps data and/or dump files created by vmd or other software seem to be corrupt.
 
-Z1+ crashes, because the data and/or dump files may not contain the molecule IDs. To heal this problem we offer a script that corrects data and dump files using just one command, and saves the new files with "-corrected" appended to their original names. Call
-
-        perl convert_vmd_data_to_proper_data.pl
+Z1+ crashes, because the data and/or dump files may not contain the molecule IDs. To heal this problem we offer a Python script that corrects data and dump files using just one command, rebuilds molecule ids from the bond graph, and saves the new files with "-corrected" appended to their original names. Call
+        python scripts/convert_vmd_data_to_proper_data.py -h
 
 to see the description. A typical call is 
 
-        perl convert_vmd_data_to_proper_data.pl -data=MyLammps.data -dump=MyLammps.dump 
-
+        python scripts/convert_vmd_data_to_proper_data.py -data=MyLammps.data -dump=MyLammps.dump
 ## Z1+ results exhibit periodic oscillations when analysing a sheared dump trajectory
 
-This problem was caused by a sign problem in the conversion from xlobound to xlo, and had been fixed. Download Z1+import-lammps.pl from the scripts directory and overwrite your existing Z1+import-lammps.pl located within in your Z1+ installation directory. There is no need to re-install Z1+. 
+This problem was caused by a sign problem in the older Perl importer. Use `python scripts/Z1+import-lammps.py ...` from this repo for current workflows; there is no need to patch the retired helper.
 
 ## Error message: cp: target 'config.Z1' is not a directory
 
@@ -155,7 +161,7 @@ This error appears if the time step in your lammps dump file exceeds 2147483647,
 
 ## Error message: Z1+ crashed if Z1+ is applied to a sheared lammps data file 
 
-Please download the updated Z1+import-lammps.pl file from the scripts directory and replace your existing file by the new one. There is no need to reinstall Z1+. The error was due to a missing line (marked by 13 nov 2024). 
+Use `python scripts/Z1+import-lammps.py ...` from this repo instead of the older helper from legacy bundles. The current Python importer includes the corresponding fix.
 
 ## How to cite the Z1+ code?
 
