@@ -5,6 +5,14 @@
 __pycache__/
 *.pyc
 
+# Local tools / downloads
+downloads/
+z1plus-run/
+Z1+
+.vscode/
+.codex
+.codex/
+
 # Generated postprocessing outputs
 Z1+merge.data
 Z1+merged.dump
