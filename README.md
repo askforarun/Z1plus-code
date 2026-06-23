@@ -15,12 +15,12 @@ The repository includes a PVA example (polymer):
 
 For this bundled example:
 
-- the original `.gro` file contains `300` linear PVA chains in a periodic box
+- the original `.gro` file contains `300` PVA chains in a periodic box, along with additional `GLU` residues
 - the original atomistic configuration contains `55650` atoms in total
 - each chain contributes `51` backbone carbon atoms to the Z1 input
 - the converted Z1 file therefore contains `15300` backbone coordinates in total
 
-In this workflow, the Z1 file contains only the polymer backbone used for Z1+ analysis. It does not keep the full atomistic coordinates of hydrogens or side-group atoms. The coordinates are written chain-by-chain, and periodic crossings are unwrapped along each chain before the Z1 file is written.
+In this workflow, the Z1 file contains only the polymer backbone used for Z1+ analysis. It does not keep the full atomistic coordinates of hydrogens, side-group atoms, or the additional `GLU` residues. The coordinates are written chain-by-chain, and periodic crossings are unwrapped along each chain before the Z1 file is written.
 
 The Z1 format used here is:
 
