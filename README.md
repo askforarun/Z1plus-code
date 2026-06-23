@@ -1,6 +1,6 @@
 # Z1plus-code
 
-This repository keeps the Z1+ workflow simple for PVA systems:
+This repository includes the Z1+ workflow for PVA (polyvinyl alcohol) systems:
 
 1. install Z1+
 2. convert a GROMACS `.gro` file to `config.Z1`
@@ -12,6 +12,22 @@ The repository includes a PVA example (polymer):
 - converted Z1 input: `examples/pva-n51/pva-backbone-N51-config.Z1`
 - backbone mapping file: `examples/pva-n51/pva-backbone-N51-info.txt`
 - example Z1+ outputs: `examples/pva-n51/outputs/`
+
+For this bundled example:
+
+- the original `.gro` file contains `300` linear PVA chains in a periodic box
+- the original atomistic configuration contains `55650` atoms in total
+- each chain contributes `51` backbone carbon atoms to the Z1 input
+- the converted Z1 file therefore contains `15300` backbone coordinates in total
+
+In this workflow, the Z1 file contains only the polymer backbone used for Z1+ analysis. It does not keep the full atomistic coordinates of hydrogens or side-group atoms. The coordinates are written chain-by-chain, and periodic crossings are unwrapped along each chain before the Z1 file is written.
+
+The Z1 format used here is:
+
+- line 1: number of chains
+- line 2: box lengths `boxx boxy boxz`
+- line 3: chain lengths for all chains
+- remaining lines: `x y z` coordinates for each chain, written in order
 
 The related Z1+ paper is available here:
 https://www.sciencedirect.com/science/article/pii/S0010465522002867

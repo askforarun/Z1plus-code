@@ -44,3 +44,6 @@ Z1+SP-chain=*.dat
 
 # Temporary verification runs
 examples/*/run-check/
+
+# Local reference PDF requiring subscription access
+z1plus_code.pdf
