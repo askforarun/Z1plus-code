@@ -1,182 +1,231 @@
-# Z1+ code
+# Z1plus-code
 
-The Z1+ code creating the shortest multiple disconnected path for the analysis of entanglements in macromolecular systems is available for download [here at mendeley](https://data.mendeley.com/datasets/m425t6xtwr/1). This repo maintains a Python utility layer around the packaged Z1+ solver. Use the active Python scripts from `scripts/` instead of the older standalone Perl helpers distributed with some upstream bundles.  
+This repository keeps the Z1+ workflow simple for PVA systems:
 
-The related publication describing all features is available for free [here at Comput. Phys. Commun.](https://www.sciencedirect.com/science/article/pii/S0010465522002867?via%3Dihub)
+1. install Z1+
+2. convert a GROMACS `.gro` file to `config.Z1`
+3. run Z1+ on that file
 
-Here we collect questions, answers, and additional scripts that may be useful for Z1+ users. 
+The repository includes a PVA example (polymer):
 
-If you come across any problem during installing or testing Z1+, please be so kind to let me know, so that I can add the information for others to this site.  
+- input `.gro` file: `examples/pva-n51/isotropic_equilibration_gromacs_N51.gro`
+- converted Z1 input: `examples/pva-n51/pva-backbone-N51-config.Z1`
+- backbone mapping file: `examples/pva-n51/pva-backbone-N51-info.txt`
+- example Z1+ outputs: `examples/pva-n51/outputs/`
 
-## Repository layout
+The related Z1+ paper is available here:
+https://www.sciencedirect.com/science/article/pii/S0010465522002867
 
-- `Z1+/` contains the packaged Z1+ solver, installer, and upstream support files.
-- `scripts/` contains the active Python utility layer.
-  - Preprocessing: `Z1+import-lammps.py`, `extract_backbone.py`, `extract_backbone_vs1.py`, and `convert_vmd_data_to_proper_data.py`.
-  - Postprocessing: `Z1+dump.py`, `Z1+dat2dump.py`, `Z1+SP-to-data.py`, `Z1+export.py`, and `extract-single-chain-entanglements.py`.
-- `replacements/` contains upstream compatibility files such as `Z1+template.pl` for the packaged launcher when needed.
+## Install Z1+
 
-## How to extract linear backbones from fully atomistic LAMMPS models 
+Z1+ needs `perl` and a Fortran compiler such as `gfortran` or `ifort`.
 
-Question: I am simulating atomistically detailed PMMA via LAMMPS, and have saved both a LAMMPS data file and a LAMMPS dump trajectory. Z1+ crashes as the LAMMPS files carry branched structures (chemical formula below). How to make it work? 
+From the repository root:
 
-<img src="images/PMMA-chemical-formula.jpg" width="25%">
+```bash
+mkdir -p downloads/z1plus
+tar -xzf downloads/z1plus.tar.gz -C downloads/z1plus
+cd downloads/z1plus
+perl Z1+install.pl
+cd ../..
+```
 
-Answer: I created a script that automatically recognizes and extracts the linear backbones from your LAMMPS data file, and saves the linear conformation as Z1-formatted file config.Z1. The Z1+ code can then be directly applied to config.Z1. If you have both a LAMMPS data file and LAMMPS dump trajectory for the same system, this script creates a Z1-formatted trajectory file. The script is available for download in the scripts folder. Call it via
-
-    python scripts/extract_backbone.py -h
-
-or 
-
-    python scripts/extract_backbone.py <lammps-data-file>
-
-or
-
-    python scripts/extract_backbone.py <lammps-data-file> <lammps-dump-trajectory>
-
-Note. The Python `extract_backbone.py` script handles cubic trajectories and the single-tilt shear conventions carried over from the older helper. In the case of sheared configurations, prefer using a dump trajectory rather than relying on a data file alone.
-
-## How to extract linear backbones from fully atomistic LAMMPS models, if the atomistic model contains non-polymers in addition?
-
-Question posed by Jingqi Zhang in Feb 2024. I have LAMMPS data and dump-trajectories (id mol type xu yu zu) for a system that contains branched polymers as well as individual C60 beads (bead type 4). How to convert the dump-trajectory file to a Z1-trajectory file that contains only the linear backbones of the polymers? Such Z1-trajectory file can be analyzed directly using the Z1+ code, while the LAMMPS dump-trajectory file produces errors. 
-
-Answer: The Python `extract_backbone.py` script provides the same `-ignore-types=<type1,type2,..>` option. Call it via 
-
-
-    python scripts/extract_backbone.py <lammps-data-file> <lammps-dump-trajectory> -ignore-types=4
-
-If your system has more than a single atom type that need to be ignored, such as types 2,4, and 10, use -ignore-types=2,4,10.
-
-## How to produce a Z1-formatted trajectory file from an unsorted LAMMPS dump-trajectory?
-
-A LAMMPS dump-file does not contain information about bonds. Only if the dump-file had been generated using the dump_modify sort id option, and if your bead id is bonded to the adjacent bead id, Z1+ can recognize the chains. The LAMMPS data file, on the other hand, contains bond information. With a LAMMPS data and unsorted LAMMPS dump-trajectory at hand, you can use the Python `extract_backbone.py` script to create a Z1-formatted trajectory file, as it retrieves the bond graph from the data file and uses it to sort the trajectory.
-
-    python scripts/extract_backbone.py <lammps-data-file> <unsorted-lammps-dump-trajectory>
-
-## How to convert a Z1-formatted configuration or trajectory file to LAMMPS-dump-formatted file? 
-
-    python scripts/Z1+dump.py [-unfolded] <Z1-formatted-file>  
-
-creates a LAMMPS-dump file or LAMMPS-dump trajectory file. If the option -unfolded is given, the dump-file contains unfolded coordinates (xu yu zu), otherwise it contains folded (wrapped) coordinates (x,y,z). The dump-file contains two bead types: type 1 (interior beads), type 2 (terminal beads). The script is available for download in the scripts folder. 
-Note that a Z1-formatted file has all chain lengths in its third line. Z1+ also creates dat files (Z1+SP.dat, Z1+PPA.dat, Z1+initconfiguration.dat). Such .dat-files can be converted to a LAMMPS-dump trajectory myfile.dump using
-
-    python scripts/Z1+dat2dump.py [-unfolded] Z1+SP.dat > myfile.dump 
-
-
-## How to merge shortest path and original configuration file into a single data or dump trajectory?
-
-Call
-
-    python scripts/Z1+export.py
-
-to see the options. It creates data or dump files or trajectories for selected (or all) snapshots and assigns bead types 1,2,3 for the original chains, and bead types 4,5,6 for the shortest path. 
-
-There is another script, that can be called after Z1+ finished. The following script creates lammps data files for the initial and/or shortest path configuration, to see the documentation, just type 
-
-    python scripts/Z1+SP-to-data.py
-
-## How to visualize or inspect a single chain with all chains entangled with it? 
-
-This may done most conveniently using our script 
-
-    python scripts/extract-single-chain-entanglements.py <ChainId> [-folded] [-txt] [-SP] [-ee] [-o=..]
-
-Upon entering a chain ID, the script generates a lammps-formatted data file
-(format: id mol type x y z, no charges) that contains the selected chain along with all
-chains entangled with it. Note that the generated data file contains unfolded coordinates
-by default. In this new data file, all atoms and bonds of the original chains have type 1.
-By default, the name of the created data file is entangled-with-chain-ChainId.data
-If the script is called without arguments, it returns the following description.
-
-    ChainID
-        A number between 1 and number of chains present in your system.
-    -folded
-        If you prefer to create a data file with folded coordinates, add the -folded option.
-    -txt
-        If you prefer to have the coordinates saved in txt-format, add the -txt option.
-    -dat
-        In addition to creating a lammps data file, create two files using the .dat-format.
-        Z1+initconfig-chain=ChainID.dat contains the coordinates of the original chains,
-        Z1+SP-chain=ChainID.dat contains the coordinates of the corresponding shortest paths. The dat format is: 
-            Number of chains
-            boxx boxx boxy
-            number of nodes of chain #1
-            x y z
-            ...
-            number of nodes of chain #2
-            x y z
-            ...
-            etc
-    -SP
-        Add the shortest paths of all chains (atom and bond type 2) to the created data file.
-    -ee
-        Add the end-to-end bonds (bond type 3) to the created data file.
-    -o=<filename>
-        Write the data file to <filename> instead of using the default.
-
-## How to add nanoparticles and rigid bodies to my configuration prior applying Z1+?
-
-There is repository [Zmesh](https://github.com/popolin522/Zmesh) available that provides reasons on why and how rigid bodies can be meshed and used directly with 
-a polymer configuration in Z1+. In short, you can add any kind of surface mesh made of dumbbells (polymers with 2 beads only) to your configuration file (lammps data
-file, in particular). Since Z1+ does not move the terminal atoms of chains, the surface(s) will serve as obstacles.
-
-## How to analyze a sheared, atomistic dump trajectory?
-
-You need a lammps data file of the unsheared system, as well as a dump trajectory file. Z1+ assumes that you shear in x-direction, gradient in y-direction, so that the only nonzero tilt is xy. Extract the backbone and tilt values, pass them over to config.Z1, and start Z1+ via
-
-        python scripts/extract_backbone.py <myfile.data> <myfile.dump>
-        perl ./Z1+
-
-## Are there benchmark configurations to test my own implementation of Z1+?
-
-Yes, some of the benchmark configurations treated in the publication are available from the benchmark-configurations directory. 
-
-## The -PPA (and -PPA+) option produces no useful result
-
-This happens if the system is not of standard Kremer-Grest type, with a maximum bond length of 1.5. The PPA option has been added using classical PPA parameters, and can therefore only be applied if the system respects the constraint. We did not invent new PPA parameters to allow for a comparison with classical PPA results, and because results depend on the choice of parameters. If your system has a bond length that exceeds the maximum allowed value 1.5 is seen in this line:
-
-        PPA+ init max bondl (all)     1.54848
-
-If you still want to use the PPA or PPA+ options, you have to scale your box sizes and particle coordinates in your configuration file.
-
-## Z1+ crashes because the the lammps data and/or dump files created by vmd or other software seem to be corrupt.
-
-Z1+ crashes, because the data and/or dump files may not contain the molecule IDs. To heal this problem we offer a Python script that corrects data and dump files using just one command, rebuilds molecule ids from the bond graph, and saves the new files with "-corrected" appended to their original names. Call
-        python scripts/convert_vmd_data_to_proper_data.py -h
-
-to see the description. A typical call is 
-
-        python scripts/convert_vmd_data_to_proper_data.py -data=MyLammps.data -dump=MyLammps.dump
-## Z1+ results exhibit periodic oscillations when analysing a sheared dump trajectory
-
-This problem was caused by a sign problem in the older Perl importer. Use `python scripts/Z1+import-lammps.py ...` from this repo for current workflows; there is no need to patch the retired helper.
-
-## Error message: cp: target 'config.Z1' is not a directory
-
-The original CPC version of Z1+ was developed on a platform where blanks in directory and file names are prohibited. Therefore please install Z1+ in a directory whose parents have no blanks in directory names, or alternatively, replace the file Z1+template.pl residing in your installation directory by Z1+template.pl offered in the replacements folder (and let me know if this solved your problem). 
-
-## Error message: severe (64): input conversion error
-
-This error appears if the time step in your lammps dump file exceeds 2147483647, the largest default-sized integer. 
-
-## Error message: Z1+ crashed if Z1+ is applied to a sheared lammps data file 
-
-Use `python scripts/Z1+import-lammps.py ...` from this repo instead of the older helper from legacy bundles. The current Python importer includes the corresponding fix.
-
-## How to cite the Z1+ code?
-
-    M. Kröger, J. D. Dietz, R. S. Hoy and C. Luap,
-    The Z1+package: Shortest multiple disconnected path for the analysis of entanglements in macromolecular systems,
-    Comput. Phys. Commun. 283 (2023) 108567. DOI 10.1016/j.cpc.2022.108567
-
-or if you are using bibtex:
-
-    @article{Z1+,
-     author = {M. Kr\"oger and J. D. Dietz and R. S. Hoy and C. Luap},
-     title = {The Z1+package: Shortest multiple disconnected path for the analysis of entanglements in macromolecular systems},
-     journal = {Comput. Phys. Commun.},
-     volume = {283},
-     pages = {108567},
-     year = {2023},
-     doi = {10.1016/j.cpc.2022.108567}
-    }
+After that, run the generated launcher from outside the installation directory:
+
+```bash
+/absolute/path/to/downloads/z1plus/Z1+ config.Z1
+```
+
+## Convert A `.gro` File To Z1 Format
+
+The example below is for PVA data where:
+
+- the polymer residue name is `PVA`
+- backbone atoms are named `C1`, `C2`, `C3`, ...
+- coordinates in the `.gro` file are in nm and are scaled by `10.0`
+
+Use this Python code:
+
+```python
+#!/usr/bin/env python3
+
+from __future__ import annotations
+
+import re
+import sys
+from pathlib import Path
+
+
+CARBON_NAME = re.compile(r"^C(\d+)$")
+
+
+def round_away_from_zero(value: float) -> int:
+    if value == 0:
+        return 0
+    return int(value / abs(value) * int(abs(value) + 0.5))
+
+
+def parse_gro(path: Path, scale: float) -> tuple[str, list[dict[str, object]], tuple[float, float, float]]:
+    lines = path.read_text().splitlines()
+    if len(lines) < 3:
+        raise ValueError(f"{path} is too short to be a valid .gro file")
+
+    title = lines[0].strip()
+    atom_count = int(lines[1].strip())
+    atom_lines = lines[2:2 + atom_count]
+    if len(atom_lines) != atom_count:
+        raise ValueError(f"{path} declares {atom_count} atoms but contains {len(atom_lines)} atom lines")
+
+    atoms: list[dict[str, object]] = []
+    for line in atom_lines:
+        atoms.append(
+            {
+                "residue_id": int(line[0:5]),
+                "residue_name": line[5:10].strip(),
+                "atom_name": line[10:15].strip(),
+                "atom_id": int(line[15:20]),
+                "x": float(line[20:28]) * scale,
+                "y": float(line[28:36]) * scale,
+                "z": float(line[36:44]) * scale,
+            }
+        )
+
+    box_tokens = lines[2 + atom_count].split()
+    box = tuple(float(token) * scale for token in box_tokens[:3])
+    return title, atoms, box
+
+
+def group_residue_blocks(atoms: list[dict[str, object]]) -> list[list[dict[str, object]]]:
+    if not atoms:
+        return []
+    blocks = []
+    current = [atoms[0]]
+    current_key = (atoms[0]["residue_id"], atoms[0]["residue_name"])
+    for atom in atoms[1:]:
+        key = (atom["residue_id"], atom["residue_name"])
+        if key == current_key:
+            current.append(atom)
+        else:
+            blocks.append(current)
+            current = [atom]
+            current_key = key
+    blocks.append(current)
+    return blocks
+
+
+def backbone_atoms_from_pva_block(block: list[dict[str, object]], residue_name: str) -> list[dict[str, object]]:
+    selected = []
+    for atom in block:
+        match = CARBON_NAME.match(str(atom["atom_name"]))
+        if match is not None:
+            selected.append((int(match.group(1)), atom))
+    if not selected:
+        raise ValueError(f"Residue {block[0]['residue_id']} {residue_name} has no backbone carbon atoms")
+    selected.sort(key=lambda item: item[0])
+    return [atom for _, atom in selected]
+
+
+def unwrap_chain(chain: list[dict[str, object]], box: tuple[float, float, float]) -> list[tuple[float, float, float]]:
+    boxx, boxy, boxz = box
+    coords = [(float(chain[0]["x"]), float(chain[0]["y"]), float(chain[0]["z"]))]
+    prev_raw = chain[0]
+    prev_unwrapped = coords[0]
+    for atom in chain[1:]:
+        dx = float(atom["x"]) - float(prev_raw["x"])
+        dy = float(atom["y"]) - float(prev_raw["y"])
+        dz = float(atom["z"]) - float(prev_raw["z"])
+        dx -= boxx * round_away_from_zero(dx / boxx)
+        dy -= boxy * round_away_from_zero(dy / boxy)
+        dz -= boxz * round_away_from_zero(dz / boxz)
+        current = (
+            prev_unwrapped[0] + dx,
+            prev_unwrapped[1] + dy,
+            prev_unwrapped[2] + dz,
+        )
+        coords.append(current)
+        prev_raw = atom
+        prev_unwrapped = current
+    return coords
+
+
+def convert_gro_to_z1(
+    gro_path: str,
+    output_path: str = "config.Z1",
+    info_path: str = "backbone-info.txt",
+    polymer_residue: str = "PVA",
+    scale: float = 10.0,
+) -> None:
+    title, atoms, box = parse_gro(Path(gro_path), scale)
+    blocks = group_residue_blocks(atoms)
+
+    chains = []
+    for block in blocks:
+        if block[0]["residue_name"] == polymer_residue:
+            chains.append(backbone_atoms_from_pva_block(block, polymer_residue))
+
+    if not chains:
+        raise ValueError(f"No residue blocks named {polymer_residue!r} were found in {gro_path}")
+
+    config_lines = [str(len(chains)), f"{box[0]:.15g} {box[1]:.15g} {box[2]:.15g}"]
+    config_lines.append(" ".join(str(len(chain)) for chain in chains))
+
+    info_lines = [
+        f"# source {title}",
+        f"# gro {Path(gro_path).resolve()}",
+        f"# polymer_residue {polymer_residue}",
+        "# each block below is: chain_id chain_length followed by original .gro atom ids",
+    ]
+
+    for chain_id, chain in enumerate(chains, start=1):
+        for x, y, z in unwrap_chain(chain, box):
+            config_lines.append(f"{x:.15g} {y:.15g} {z:.15g}")
+        info_lines.append(f"{chain_id} {len(chain)}")
+        info_lines.extend(str(atom["atom_id"]) for atom in chain)
+
+    Path(output_path).write_text("\n".join(config_lines) + "\n")
+    Path(info_path).write_text("\n".join(info_lines) + "\n")
+
+
+if __name__ == "__main__":
+    if len(sys.argv) < 2:
+        raise SystemExit("usage: python gro_to_z1.py input.gro [output.Z1] [info.txt]")
+    gro_file = sys.argv[1]
+    output_file = sys.argv[2] if len(sys.argv) > 2 else "config.Z1"
+    info_file = sys.argv[3] if len(sys.argv) > 3 else "backbone-info.txt"
+    convert_gro_to_z1(gro_file, output_file, info_file)
+    print(f"created {output_file}")
+    print(f"created {info_file}")
+```
+
+Example:
+
+```bash
+python gro_to_z1.py examples/pva-n51/isotropic_equilibration_gromacs_N51.gro config.Z1 backbone-info.txt
+```
+
+This creates:
+
+- `config.Z1` for Z1+
+- `backbone-info.txt` with the mapping from Z1 backbone atoms back to the original `.gro` atom ids
+
+## Run Z1+
+
+Once `config.Z1` has been created, run:
+
+```bash
+/absolute/path/to/downloads/z1plus/Z1+ config.Z1
+```
+
+Z1+ will then generate its usual output files such as `Z1+summary.dat`, `Z1+SP.dat`, `Z1+initconfig.dat`, and related analysis files.
+You will find these files in the working directory where you ran the `Z1+ config.Z1` command.
+
+This repository also includes one ready-made output set in `examples/pva-n51/outputs/` so users can compare their own run against a known PVA example.
+
+## Citation
+
+```text
+M. Kröger, J. D. Dietz, R. S. Hoy and C. Luap,
+The Z1+ package: Shortest multiple disconnected path for the analysis of entanglements in macromolecular systems,
+Comput. Phys. Commun. 283 (2023) 108567
+https://doi.org/10.1016/j.cpc.2022.108567
+```

@@ -1,0 +1,157 @@
+[1;32;40m    _____  ___  [1;37;40m
+[1;32;40m   /__  / /__ |    _    [1;37;40m
+[1;32;40m     / /    | |  _| |_     (c) 2022 mk.ethz.ch[1;37;40m
+[1;32;40m    / /_    | | |_   _| [1;37;40m
+[1;32;40m   /____/   |_|   |_|   [1;37;40m
+[1;32;40m                        [1;37;40m
+working directory:      /mnt/scratch/users/ass2009/Z1plus-code
+installation directory: /mnt/scratch/users/ass2009/Z1plus-code/downloads/z1plus
+[1;32;40m
+assuming Z1-formatted configuration file[1;37;40m
+[1;32;40m
+Z1+parameters contains:[1;37;40m
+&parameters
+stats = .False.
+logfile = .False.
+lmax_factor = 1.0
+thickness = 0.002
+self_entanglement = .False.
+basic_SP = .False.
+calc_PPA = .False.
+calc_CPPA = .False.
+/
+
+[Z1+] removing Z1+SP.dat
+[Z1+] removing Lpp_values.dat
+[Z1+] removing N_values.dat
+[Z1+] removing Ree_values.dat
+[Z1+] removing Z1+initconfig.dat
+[Z1+] removing Z_values.dat
+[Z1+] removing Z1+summary.dat
+[Z1+] removing Z1+summary.html
+[Z1+] finished cleaning
+[1;32;40m0[1;37;40m
+      _____  ___          
+     /__  / /__ |    _    
+       / /    | |  _| |_      (c) 2022 mk@mat.ethz.ch
+      / /_    | | |_   _| 
+     /____/   |_|   |_|      This executable was licensed for CPC                                                                             
+                             renew your license in < 34976 days
+________________________________________________________________________________ about
+                                                                                
+(c) mk@mat.ethz.ch (Z1+) version 1 June 2022 http://www.complexfluids.ethz.ch
+Z1+ is online at http://www.complexfluids.ethz.ch/Z1+
+Consider mentioning these publications when making use of Z1+ results in your research:
+ [1] http://doi.org/10.1016/j.cpc.2005.01.020
+ [2] http://doi.org/10.1021/ma062457k
+ [3] http://doi.org/10.1103/PhysRevE.80.031803
+ [4] http://doi.org/10.3390/ijms10115054
+ [5] The Z1+ package: Shortest multiple disconnected path for
+     the analysis of entanglements in macromolecular systems,
+     Comput. Phys. Commun. (2022) in press.
+                                                                                
+                        Z1+ atoms (init)       18900
+                        Z1+ nodes (init)       18900
+                              Z1+ chains         300
+                         Z1+ true chains         300
+                                 Z1+ box    87.11040     84.07390     84.39240
+                      Z1+ number density     0.03058
+                             Z1+ min box    84.07390
+                                 Z1+ epc     0.00000
+       Z1+ init mean bondl (true chains)     1.57139
+      Z1+ init mean bondl (+extra nodes)     1.57139
+                Z1+ init max bondl (all)     1.77758
+                                Z1+ lmax     1.77758
+                           Z1+ thickness     0.00200
+                                Z1+ rcut     1.53943
+                                  Z1+ M           57           55           55
+                                  Z1+ Mi          -1           -1           -1
+                                  Z1+ Mf           1            1            1
+                             Z1+ binsize     1.52825      1.52862      1.53441
+________________________________________________________________________________ legend
+                                                                                
+Z1+ (legend)    pro: progress
+Z1+ (legend)   rcut: cutoff radius
+Z1+ (legend)    vis: visits
+Z1+ (legend)    o  : crossings
+Z1+ (legend)    new: new nodes
+Z1+ (legend)    ---: too long
+Z1+ (legend)    ?  : ghost nodes
+Z1+ (legend)    x  : erased
+Z1+ (legend)  bondl: mean edge length
+Z1+ (legend)  nodes: number of nodes
+Z1+ (legend)  maxID: largest node ID
+Z1+ (legend) handle: # crosspoints handled
+Z1+ (legend)   mem%: percentage of allocated memory used
+________________________________________________________________________________ Z1+ on the fly
+                                                                                
+Z1+  scan  < Lpp >    pro    rcut    vis      o    new    ---      ?      x bondl    nodes    maxID    handled mem%    secs
+Z1+     0   97.426      0   1.539      0      0      0      0      0      0  1.57    18900        0          0  0.0     0.1
+Z1+     1   81.288      1   1.539  18300      0      0      0  18299      1  1.31    18899        0      18300  0.0     0.1
+Z1+     2   74.739   8255   3.129  18300      2      1      0  10044   8254  2.17    10646    14837      36600 65.4     0.2
+Z1+     3   70.509   2453   3.789  10120     96     74      8   7653   2371  2.63     8349    18733      46720 82.6     0.2
+Z1+     4   67.927   1325   4.108   7973    424    224     55   6503   1046  2.82     7527    18867      54693 83.2     0.3
+Z1+     5   66.461    724   4.253   7141    631    214     56   6056    454  2.86     7287    18867      61834 83.2     0.3
+Z1+     6   65.554    558   4.299   6889    751    202     40   5822    316  2.87     7173    18894      68723 83.3     0.3
+Z1+     7   64.952    463   4.322   6752    807    179     29   5690    255  2.87     7097    18894      75475 83.3     0.4
+Z1+     8   64.561    404   4.337   6666    859    169     20   5592    215  2.88     7051    18894      82141 83.3     0.4
+Z1+     9   64.289    360   4.346   6612    911    161     16   5518    183  2.88     7029    18894      88753 83.3     0.4
+Z1+  scan  < Lpp >    pro    rcut    vis      o    new    ---      ?      x bondl    nodes    maxID    handled mem%    secs
+Z1+    10   64.090    385   4.351   6599    956    170      9   5437    206  2.88     6993    18894      95352 83.3     0.5
+Z1+    11   63.945    375   4.358   6565   1010    172     16   5368    187  2.88     6978    18894     101917 83.3     0.5
+Z1+    12   63.835    348   4.362   6536   1043    158     10   5313    180  2.89     6956    18894     108453 83.3     0.5
+Z1+    13   63.749    344   4.366   6514   1058    158      4   5274    182  2.89     6932    18894     114967 83.3     0.6
+Z1+    14   63.661    355   4.371   6499   1090    167     16   5237    172  2.89     6927    18894     121466 83.3     0.6
+Z1+    15   63.574    330   4.372   6481   1101    154      8   5212    168  2.89     6913    18894     127947 83.3     0.7
+Z1+    16   63.507    325   4.375   6466   1123    153      5   5176    167  2.90     6899    18894     134413 83.3     0.7
+Z1+    17   63.461    330   4.378   6453   1145    154      3   5135    173  2.90     6880    18894     140866 83.3     0.7
+Z1+    18   63.425    341   4.382   6442   1177    162      8   5094    171  2.91     6871    18894     147308 83.3     0.8
+Z1+    19   63.396    312   4.384   6421   1187    150      6   5078    156  2.91     6865    18894     153729 83.3     0.8
+Z1+  scan  < Lpp >    pro    rcut    vis      o    new    ---      ?      x bondl    nodes    maxID    handled mem%    secs
+Z1+    20   63.373    333   4.385   6427   1208    162      4   5052    167  2.91     6860    18894     160156 83.3     0.9
+Z1+    21   63.354    304   4.386   6408   1224    148      4   5032    152  2.91     6856    18894     166564 83.3     0.9
+Z1+    22   63.337    290   4.387   6397   1234    141      3   5017    146  2.91     6851    18894     172961 83.3     0.9
+Z1+    23   63.322    286   4.388   6389   1242    138      2   5001    146  2.91     6843    18894     179350 83.3     1.0
+Z1+    24   63.309    269   4.390   6376   1248    133      1   4993    135  2.91     6841    18894     185726 83.3     1.0
+Z1+    25   63.291    288   4.391   6382   1268    141      5   4972    142  2.91     6840    18894     192108 83.3     1.0
+Z1+    26   63.281    292   4.391   6381   1280    141      7   4957    144  2.91     6837    18894     198489 83.3     1.1
+Z1+    27   63.273    268   4.391   6369   1280    132      2   4955    134  2.92     6835    18894     204858 83.3     1.1
+Z1+    28   63.265    274   4.392   6371   1286    136      3   4950    135  2.91     6836    18898     211229 83.3     1.2
+Z1+    29   63.259    254   4.392   6361   1288    125      1   4945    128  2.92     6833    18898     217590 83.3     1.2
+Z1+  scan  < Lpp >    pro    rcut    vis      o    new    ---      ?      x bondl    nodes    maxID    handled mem%    secs
+Z1+    30   63.253    268   4.392   6365   1292    132      1   4938    135  2.92     6830    18898     223955 83.3     1.2
+Z1+    31   63.248    256   4.393   6357   1294    127      1   4935    128  2.92     6829    18898     230312 83.3     1.3
+Z1+    32   63.243    256   4.393   6356   1298    127      1   4930    128  2.92     6828    18898     236668 83.3     1.3
+Z1+    33   63.239    260   4.393   6356   1302    128      0   4922    132  2.92     6824    18898     243024 83.3     1.3
+Z1+    34   63.236    249   4.394   6347   1306    123      2   4917    124  2.92     6823    18898     249371 83.3     1.4
+Z1+    35   63.232    247   4.394   6347   1306    124      0   4918    123  2.92     6824    18898     255718 83.3     1.4
+                       identifying kinks
+Z1+    35   63.011      0   7.611      0      0      0      0      0      0 15.15     1634    18898     255718 83.3     1.6
+________________________________________________________________________________ Z1+ results for true chains
+                                  chains         300
+                                 < Lpp >    63.01101
+                                   < Z >     3.44667
+                                     Ree    50.30380
+                                     app    40.15920
+                                     bpp     1.01631
+                                   < N >    63.00000
+                   Ne_CK: classical kink    14.11671 (defined in DOI 10.1103/PhysRevE.80.031803)
+                   Ne_MK:  modified kink    18.27853 (defined in DOI 10.1103/PhysRevE.80.031803)
+                   Ne_CC: classical coil    39.51485 (defined in DOI 10.1103/PhysRevE.80.031803)
+                   Ne_MC:  modified coil   100.56911 (defined in DOI 10.1103/PhysRevE.80.031803)
+________________________________________________________________________________ postprocessing Z1+ results
+                          creating _line
+                 creating Z1+summary.dat
+                creating Z1+summary.html
+            analyzing+saving unfolded SP
+________________________________________________________________________________ generated files
+                                                                                
+ 1) N_values.dat
+ 2) Ree_values.dat
+ 3) Lpp_values.dat
+ 4) Z_values.dat
+ 5) Z1+SP.dat
+ 6) Z1+summary.dat
+ 7) Z1+summary.html
+ 8) Z1+initconfig.dat
+Z1+ finished after 1.759149 seconds

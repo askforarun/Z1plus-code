@@ -23,3 +23,24 @@ entangled-with-chain-*.data
 entangled-with-chain-*.txt
 Z1+initconfig-chain=*.dat
 Z1+SP-chain=*.dat
+
+# Generated run outputs in the repo root
+/.Z1+cpu+secs
+/config.Z1
+/backbone-info.txt
+/backbone-from-gro.txt
+/config-from-gro.Z1
+/Z1+SP.dat
+/Z1+initconfig.dat
+/Z1+summary.dat
+/Z1+summary.html
+/Lpp_values.dat
+/N_values.dat
+/Ree_values.dat
+/Z_values.dat
+/log-*.txt
+/tmp-*.Z1
+/tmp-*.txt
+
+# Temporary verification runs
+examples/*/run-check/
