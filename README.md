@@ -6,7 +6,61 @@ This repository includes the Z1+ workflow for PVA (polyvinyl alcohol) systems:
 2. convert a GROMACS `.gro` file to `config.Z1`
 3. run Z1+ on that file
 
-The repository includes a PVA example (polymer):
+## Current dry PVA--GLU analysis
+
+The current manuscript analyzes one final snapshot at 6 ns per independent
+replica at 300 and 625 K, with three replicas for each strand length.
+Here `n` counts hydroxyl-bearing repeat units, not backbone carbon atoms:
+
+| n | PVA strands | GLU junctions | Total atoms | Backbone carbons per strand |
+| --- | --- | --- | --- | --- |
+| 17 | 2700 | 1350 | 371250 | 35 |
+| 21 | 2100 | 1050 | 347550 | 43 |
+| 25 | 1800 | 900 | 348300 | 51 |
+
+Only ordered PVA backbone carbons (`C1` through `C(2n+1)`) are exported.
+GLU atoms and side groups are omitted; junction connectivity is not explicitly
+encoded in this backbone-only Z1 input. Periodic crossings are unwrapped along
+each strand using successive minimum-image bond vectors.
+
+Use the maintained converter from the repository root (Python 3.10 or newer):
+
+```bash
+python scripts/gro_to_z1.py final_production.gro -o config.Z1 --info backbone-info.txt
+```
+
+It selects contiguous `PVA` residue blocks, checks consecutive carbon labels,
+and converts coordinates and box lengths from nm to angstroms. The converter
+supports orthorhombic boxes, not tilted triclinic cells. GRO atom numbers may
+wrap above 99999; mapping-file atom numbers are the original GRO fields,
+not guaranteed globally unique atom identifiers.
+
+For the current analysis, average the per-strand interior kink count `Z`
+within each snapshot. Normalize that replica-level mean by
+`Lc = 2*n*0.154 nm` to obtain kink density, then report the mean and sample
+standard deviation across the three replica-level estimates. These quantities
+describe retained geometric constraints; they are not an independent measure
+of elastically active entanglements or a melt entanglement molecular weight.
+
+The 18 backbone-only Z1 inputs used for the reported analysis (nine replicas at
+300 and 625 K), together with their chain-to-GRO-atom mapping files, are
+included under `examples/pva-glu-current/` using the directory pattern
+`n{17,21,25}/replica-{1,2,3}/{300,625}K/`. Each directory contains
+`config.Z1` and `backbone-info.txt`. The original atomistic trajectories are
+not included. Machine-specific source paths were removed from the mapping-file
+headers; the listed atom numbers retain the source `.gro` serial fields and
+may not be globally unique when those fields wrap above 99999.
+
+Validate the bundled input structure with:
+
+```bash
+python scripts/validate_current_inputs.py
+```
+
+## Legacy example
+
+The repository also includes an older PVA example (polymer), retained for
+demonstration rather than as a current production system:
 
 - input `.gro` file: `examples/pva-n51/isotropic_equilibration_gromacs_N51.gro`
 - converted Z1 input: `examples/pva-n51/pva-backbone-N51-config.Z1`
@@ -216,7 +270,7 @@ if __name__ == "__main__":
 Example:
 
 ```bash
-python gro_to_z1.py examples/pva-n51/isotropic_equilibration_gromacs_N51.gro config.Z1 backbone-info.txt
+python scripts/gro_to_z1.py examples/pva-n51/isotropic_equilibration_gromacs_N51.gro -o config.Z1 --info backbone-info.txt
 ```
 
 This creates:
