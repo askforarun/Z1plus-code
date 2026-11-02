@@ -57,24 +57,21 @@ Validate the bundled input structure with:
 python scripts/validate_current_inputs.py
 ```
 
-## Legacy example
+## Current Example
 
-The repository also includes an older PVA example (polymer), retained for
-demonstration rather than as a current production system:
+The bundled input `examples/pva-glu-current/n17/replica-1/300K/config.Z1`
+is a current PVA--GLU network snapshot. It contains 2700 PVA strands with 35
+backbone carbons per strand (94500 backbone coordinates); the corresponding
+chain-to-GRO-atom mapping is in the adjacent `backbone-info.txt` file.
 
-- input `.gro` file: `examples/pva-n51/isotropic_equilibration_gromacs_N51.gro`
-- converted Z1 input: `examples/pva-n51/pva-backbone-N51-config.Z1`
-- backbone mapping file: `examples/pva-n51/pva-backbone-N51-info.txt`
-- example Z1+ outputs: `examples/pva-n51/outputs/`
+To run Z1+ on this input, use the installed executable from a separate output
+directory:
 
-For this bundled example:
-
-- the original `.gro` file contains `300` PVA chains in a periodic box, along with additional `GLU` residues
-- the original atomistic configuration contains `55650` atoms in total
-- each chain contributes `51` backbone carbon atoms to the Z1 input
-- the converted Z1 file therefore contains `15300` backbone coordinates in total
-
-In this workflow, the Z1 file contains only the polymer backbone used for Z1+ analysis. It does not keep the full atomistic coordinates of hydrogens, side-group atoms, or the additional `GLU` residues. The coordinates are written chain-by-chain, and periodic crossings are unwrapped along each chain before the Z1 file is written.
+```bash
+mkdir -p z1plus-example-run
+cd z1plus-example-run
+/absolute/path/to/downloads/z1plus/Z1+ /absolute/path/to/Z1plus-code/examples/pva-glu-current/n17/replica-1/300K/config.Z1
+```
 
 The Z1 format used here is:
 
@@ -270,7 +267,7 @@ if __name__ == "__main__":
 Example:
 
 ```bash
-python scripts/gro_to_z1.py examples/pva-n51/isotropic_equilibration_gromacs_N51.gro -o config.Z1 --info backbone-info.txt
+python scripts/gro_to_z1.py path/to/production_snapshot.gro -o config.Z1 --info backbone-info.txt
 ```
 
 This creates:
@@ -288,8 +285,6 @@ Once `config.Z1` has been created, run:
 
 Z1+ will then generate its usual output files such as `Z1+summary.dat`, `Z1+SP.dat`, `Z1+initconfig.dat`, and related analysis files.
 You will find these files in the working directory where you ran the `Z1+ config.Z1` command.
-
-This repository also includes one ready-made output set in `examples/pva-n51/outputs/` so users can compare their own run against a known PVA example.
 
 ## Citation
 
