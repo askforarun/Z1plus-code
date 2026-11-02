@@ -1,5 +1,13 @@
 7f61a89cb2bf30963f394c40880618c3e8ad4d97ef67f700eb4b9c294732ee6d  examples/pva-glu-current/n17/replica-1/300K/backbone-info.txt
 e0c4b79cce81191ceac4f8fb202de9c94e4a886af863801b1bf9e3929bdd4ff2  examples/pva-glu-current/n17/replica-1/300K/config.Z1
+10378ade91ee7dbdd6bf74be892b41fbc8adae58ff8d4c7a3b7887f58d6dfb50  examples/pva-glu-current/n17/replica-1/300K/outputs/Lpp_values.dat
+d938a8e658a665b6d8809738881289e7562707aa1929ab4eb86a724a510cf269  examples/pva-glu-current/n17/replica-1/300K/outputs/N_values.dat
+15a2851805d604d821c3cc8a0552d81ce27a5f54c60555bceef46669820eeb46  examples/pva-glu-current/n17/replica-1/300K/outputs/Ree_values.dat
+b55fb81b4d7d344196092eb1871627b7db3fd7f8ef0e5d0138461b4b3b546c36  examples/pva-glu-current/n17/replica-1/300K/outputs/Z1+SP.dat
+883d8e326a36f716b3637b9ceec96698a969e7af92ede0373702101c8cc36695  examples/pva-glu-current/n17/replica-1/300K/outputs/Z1+initconfig.dat
+fa7ee13806fa775181dc2f52a77f1d33b73ddc28e2101024ec0a84172a50705c  examples/pva-glu-current/n17/replica-1/300K/outputs/Z1+summary.dat
+a4d349a7eaf3d6d5dc5c9ce074a1bf25aefeb5409bffaf6a8756c92ef18f44f3  examples/pva-glu-current/n17/replica-1/300K/outputs/Z1+summary.html
+60daf59951f254e4eebde6b4e1103f3634369eb9a5e45f065840a6835ba4e946  examples/pva-glu-current/n17/replica-1/300K/outputs/Z_values.dat
 65b8443975e53f954d66fc52be7f1703432f84e53e069443df5c03263d56dea0  examples/pva-glu-current/n17/replica-1/625K/backbone-info.txt
 d7a60cf1b584433c136905bb8532acc15f95d62722978ae2cb19966e062d9670  examples/pva-glu-current/n17/replica-1/625K/config.Z1
 7a59d8fabd7c6f31365700bdd575e90206d8dcb1ed08d4f431bdc0e3838ee0ad  examples/pva-glu-current/n17/replica-2/300K/backbone-info.txt

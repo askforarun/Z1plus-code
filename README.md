@@ -62,7 +62,9 @@ python scripts/validate_current_inputs.py
 The bundled input `examples/pva-glu-current/n17/replica-1/300K/config.Z1`
 is a current PVA--GLU network snapshot. It contains 2700 PVA strands with 35
 backbone carbons per strand (94500 backbone coordinates); the corresponding
-chain-to-GRO-atom mapping is in the adjacent `backbone-info.txt` file.
+chain-to-GRO-atom mapping is in the adjacent `backbone-info.txt` file. The
+`outputs/` subdirectory contains the standard Z1+ outputs generated from this
+input. This is one replica at one temperature, not a replica-averaged result.
 
 To run Z1+ on this input, use the installed executable from a separate output
 directory:

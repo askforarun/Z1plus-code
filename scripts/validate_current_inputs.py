@@ -59,6 +59,30 @@ def check_one(n: int, replica: int, temperature: int) -> None:
         raise ValueError(f"{directory}: unexpected trailing mapping records")
 
 
+def check_reference_outputs() -> None:
+    directory = ROOT / "n17" / "replica-1" / "300K" / "outputs"
+    required = (
+        "Lpp_values.dat",
+        "N_values.dat",
+        "Ree_values.dat",
+        "Z1+SP.dat",
+        "Z1+initconfig.dat",
+        "Z1+summary.dat",
+        "Z1+summary.html",
+        "Z_values.dat",
+    )
+    for name in required:
+        path = directory / name
+        if not path.is_file() or path.stat().st_size == 0:
+            raise ValueError(f"Missing or empty reference output: {path}")
+
+    summary = [float(value) for value in (directory / "Z1+summary.dat").read_text().split()]
+    if len(summary) < 3 or summary[0] != 1 or summary[1] != STRANDS[17]:
+        raise ValueError("Reference Z1+ summary does not match the n=17 example")
+    if not math.isclose(summary[2], 2 * 17 + 1):
+        raise ValueError("Reference Z1+ summary has an unexpected strand length")
+
+
 def main() -> None:
     count = 0
     for n in STRANDS:
@@ -66,7 +90,8 @@ def main() -> None:
             for temperature in TEMPERATURES:
                 check_one(n, replica, temperature)
                 count += 1
-    print(f"Validated {count} PVA--GLU Z1 inputs and mappings.")
+    check_reference_outputs()
+    print(f"Validated {count} PVA--GLU Z1 inputs, mappings, and reference outputs.")
 
 
 if __name__ == "__main__":
